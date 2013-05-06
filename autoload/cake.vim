@@ -4,13 +4,16 @@ else
     finish
 endif
 
-func! vim_cake#CakeComplete(arglead, cmdline, cursorpos)
+func! cake#Complete(arglead, cmdline, cursorpos)
     let output = split(system('cake'), '\n')
     let tasks = []
 
     for line in output[2:-1]
-        let task = split(line, ' ')[1]
-        call add(tasks, task)
+        try
+            let task = split(line, ' ')[1]
+            call add(tasks, task)
+        catch
+        endtry
     endfor
 
     let bits = split(a:cmdline, ' ')
@@ -22,7 +25,7 @@ func! vim_cake#CakeComplete(arglead, cmdline, cursorpos)
     endif
 endf
 
-func! vim_cake#CakePreview(task)
+func! cake#Preview(task)
     pclose
     pedit cake-tasks
     wincmd p
@@ -35,9 +38,9 @@ func! vim_cake#CakePreview(task)
     setl nobuflisted
 endf
 
-func! vim_cake#Cake(bang, ...)
+func! cake#Task(bang, ...)
     if a:0 == 0
-        call s:CakePreview('')
+        call cake#Preview('')
     else
         exe '!cake '.join(a:000, ' ')
     endif
